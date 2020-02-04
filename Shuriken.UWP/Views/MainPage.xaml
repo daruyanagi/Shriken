@@ -1,0 +1,237 @@
+﻿<Page
+    x:Class="Shuriken.UWP.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Shuriken.UWP"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Row="0" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <CommandBar x:Name="TopLeftCommandBar" 
+                        Grid.Row="0" Grid.Column="0"
+                        Background="Transparent"
+                        HorizontalAlignment="Left"
+                        DefaultLabelPosition="Right"
+                        IsDynamicOverflowEnabled="False"
+                        OverflowButtonVisibility="Collapsed">
+                <AppBarButton Icon="OpenLocal" Command="{Binding OpenCommand}"></AppBarButton>
+                <AppBarButton Icon="Paste" Command="{Binding PasteCommand}"></AppBarButton>
+                <AppBarButton Icon="Refresh" Command="{Binding RestoreDefaultCommand}"></AppBarButton>
+            </CommandBar>
+
+            <CommandBar x:Name="TopRightCommandBar" 
+                        Grid.Row="0" Grid.Column="2"
+                        Background="Transparent"
+                        HorizontalAlignment="Right"
+                        DefaultLabelPosition="Right"
+                        IsDynamicOverflowEnabled="False"
+                        OverflowButtonVisibility="Collapsed">
+                <AppBarButton Icon="Save" Command="{Binding SaveCommand}"></AppBarButton>
+                <AppBarButton Icon="Copy" Command="{Binding CopyCommand}"></AppBarButton>
+                <AppBarButton x:Name="ShareButton1" Icon="Share" Command="{Binding ShareCommand}"></AppBarButton>
+            </CommandBar>
+            
+
+            <CommandBar Grid.Row="0" Grid.Column="1"
+                        Background="Transparent"
+                        HorizontalAlignment="Center"
+                        DefaultLabelPosition="Right"
+                        IsDynamicOverflowEnabled="False"
+                        OverflowButtonVisibility="Collapsed">
+
+                <CommandBar.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.Resources>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Margin" Value="8, 0" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                        </StackPanel.Resources>
+
+                        <Button Background="Transparent" 
+                                Height="38" Width="48" Margin="2"
+                                Command="{Binding ResizeCommand}"
+                                Style="{StaticResource ButtonRevealStyle}">
+                            <Button.Content>
+                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE9A6;"/>
+                            </Button.Content>
+                            <Button.Flyout>
+                                <Flyout>
+                                    <StackPanel>
+                                        <StackPanel Margin="8">
+                                            <TextBlock>Resize Mode</TextBlock>
+
+                                            <RadioButton Content="Auto (Long Side)" Checked="RadioButton_Checked" Tag="Auto" IsChecked="True" />
+                                            <RadioButton Content="Width" Checked="RadioButton_Checked" Tag="Width" />
+                                            <RadioButton Content="Height" Checked="RadioButton_Checked" Tag="Height" />
+                                            
+                                        </StackPanel>
+                                        <ComboBox x:Name="ResolutionsComboBox" 
+                                                  Margin="8" Header="Popular Screen Resolutions" 
+                                                  SelectedIndex="2"
+                                                  SelectionChanged="ComboBox_SelectionChanged">
+                                            <ComboBoxItem Tag="640">640x480 (VGA)</ComboBoxItem>
+                                            <ComboBoxItem Tag="800">800x600 (SVGA)</ComboBoxItem>
+                                            <ComboBoxItem Tag="1024">1024x768 (XGA)</ComboBoxItem>
+                                        </ComboBox>
+                                        <ToggleSwitch Margin="8" Header="Enable face detection" IsEnabled="False"/>
+                                    </StackPanel>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+
+                        <TextBox Width="80" InputScope="Number" VerticalAlignment="Center" Text="{Binding Limit, Mode=TwoWay}">
+                        </TextBox>
+                        <TextBlock>px</TextBlock>
+
+                        <Button Background="Transparent" 
+                                Height="38" Width="48" Margin="2"
+                                Command="{Binding ResizeCommand}"
+                                Style="{StaticResource ButtonRevealStyle}">
+                            <Button.Content>
+                                <SymbolIcon Symbol="Play" />
+                            </Button.Content>
+                        </Button>
+                    </StackPanel>
+                </CommandBar.Content>
+                <AppBarSeparator />
+                <AppBarButton Icon="Rotate" Command="{Binding RotateCommand}"></AppBarButton>
+                <AppBarButton Icon="Crop" Visibility="Collapsed"></AppBarButton>
+            </CommandBar>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" Grid.Column="0"
+                      HorizontalScrollBarVisibility="Visible" 
+                      VerticalScrollBarVisibility="Visible" 
+                      Background="LightGray">
+            <Canvas x:Name="Canvas"
+                    Margin="24"
+                    Height="{Binding Resized.Height}"
+                    Width="{Binding Resized.Width}">
+                <Image x:Name="ResizedImage" 
+                       Stretch="None"
+                       Source="{Binding Resized.Source}"
+                       />
+            </Canvas>
+        </ScrollViewer>
+
+        <Border Grid.Row="1" Grid.Column="0" 
+                Background="Black" Opacity="0.7"
+                Margin="36" Padding="12"
+                Height="48"
+                Width="480"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top">
+
+            <TextBlock x:Name="PropertyTextBox"
+                       Foreground="White"
+                       HorizontalAlignment="Center">
+                <Run>Original:</Run>
+                <Run Text="{Binding Original.Width}"></Run>
+                <Run>x</Run>
+                <Run Text="{Binding Original.Height}"></Run>
+                <Run> ( </Run>
+                <Run Text="{Binding Original.FileSize}"></Run>
+                <Run> )</Run>
+                <Run> → </Run>
+                <Run>Resized:</Run>
+                <Run Text="{Binding Resized.Width}"></Run>
+                <Run>x</Run>
+                <Run Text="{Binding Resized.Height}"></Run>
+                <Run> ( </Run>
+                <Run Text="{Binding Resized.FileSize}"></Run>
+                <Run> )</Run>
+            </TextBlock>
+        </Border>
+
+        <Grid Grid.Row="3" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <CommandBar x:Name="BottomLeftCommandBar" 
+                        Grid.Row="0" Grid.Column="0"
+                        Background="Transparent"
+                        HorizontalAlignment="Left"
+                        DefaultLabelPosition="Right"
+                        IsDynamicOverflowEnabled="False"
+                        OverflowButtonVisibility="Collapsed">
+                <AppBarButton Icon="OpenLocal" Command="{Binding OpenCommand}"></AppBarButton>
+                <AppBarButton Icon="Paste" Command="{Binding PasteCommand}"></AppBarButton>
+                <AppBarButton Icon="Refresh" Command="{Binding RestoreDefaultCommand}"></AppBarButton>
+            </CommandBar>
+
+            <CommandBar x:Name="BottomRightCommandBar" 
+                        Grid.Row="0" Grid.Column="2"
+                        Background="Transparent"
+                        HorizontalAlignment="Right"
+                        DefaultLabelPosition="Right"
+                        IsDynamicOverflowEnabled="False"
+                        OverflowButtonVisibility="Collapsed">
+                <AppBarButton Icon="Save" Command="{Binding SaveCommand}"></AppBarButton>
+                <AppBarButton Icon="Copy" Command="{Binding CopyCommand}"></AppBarButton>
+                <AppBarButton x:Name="ShareButton2" Icon="Share" Command="{Binding ShareCommand}"></AppBarButton>
+            </CommandBar>
+        </Grid>
+
+
+
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="SizeStateGroup">
+                <VisualState x:Name="Middle">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="TopLeftCommandBar.Visibility" Value="Collapsed" />
+                        <Setter Target="TopRightCommandBar.Visibility" Value="Collapsed" />
+                        <Setter Target="BottomLeftCommandBar.Visibility" Value="Visible" />
+                        <Setter Target="BottomRightCommandBar.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Wide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="800" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="TopLeftCommandBar.Visibility" Value="Visible" />
+                        <Setter Target="TopRightCommandBar.Visibility" Value="Visible" />
+                        <Setter Target="BottomLeftCommandBar.Visibility" Value="Collapsed" />
+                        <Setter Target="BottomRightCommandBar.Visibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
+</Page>
