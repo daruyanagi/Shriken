@@ -96,7 +96,7 @@ namespace Shuriken.UWP
             Window.Current.Activate();
 
             // ［共有］で呼ばれたときは、コマンド実行後にウィンドウを閉じるようにする。［共有］ボタンは無効化
-            ViewModel.FromShare = true;
+            // ViewModel.FromShare = true; バグのため無効化
             ViewModel.Window = Window.Current;
             ShareButton1.IsEnabled = false;
             ShareButton2.IsEnabled = false;
