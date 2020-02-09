@@ -20,6 +20,22 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
+        <!--MenuItem が KeyboardAccelerator を受け付けてくれないので-->
+
+        <Button Grid.Row="1" Command="{Binding OpenCommand}">
+            <Button.KeyboardAccelerators>
+                <KeyboardAccelerator Modifiers="Control" Key="O" />
+            </Button.KeyboardAccelerators>
+        </Button>
+
+        <Button Grid.Row="1" Command="{Binding PasteCommand}">
+            <Button.KeyboardAccelerators>
+                <KeyboardAccelerator Modifiers="Control" Key="P" />
+            </Button.KeyboardAccelerators>
+        </Button>
+
+        <!--  -->
+
         <Grid Grid.Row="0" Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
@@ -38,9 +54,31 @@
                         DefaultLabelPosition="Right"
                         IsDynamicOverflowEnabled="False"
                         OverflowButtonVisibility="Collapsed">
-                <AppBarButton Icon="OpenLocal" Command="{Binding OpenCommand}"></AppBarButton>
-                <AppBarButton Icon="Paste" Command="{Binding PasteCommand}"></AppBarButton>
-                <AppBarButton Icon="Refresh" Command="{Binding RestoreDefaultCommand}"></AppBarButton>
+
+                <AppBarButton Label="New" Icon="OpenFile" AccessKey="N">
+                    <AppBarButton.Flyout>
+                        <MenuFlyout Placement="Bottom">
+                            <MenuFlyoutItem Icon="OpenFile" Text="From File" AccessKey="O"
+                                            ToolTipService.ToolTip="Open, New image from file (Ctrl+O)" 
+                                            Command="{Binding OpenCommand}">
+                                <MenuFlyoutItem.KeyboardAccelerators>
+                                    <KeyboardAccelerator Modifiers="Control" Key="O" />
+                                </MenuFlyoutItem.KeyboardAccelerators>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem Icon="Paste" Text="From Clipboard" AccessKey="P"
+                                            ToolTipService.ToolTip="Paste, New image from clipboard (Ctrl+P)" 
+                                            Command="{Binding PasteCommand}">
+                                <MenuFlyoutItem.KeyboardAccelerators>
+                                    <KeyboardAccelerator Modifiers="Control" Key="P" />
+                                </MenuFlyoutItem.KeyboardAccelerators>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+                <AppBarButton Icon="Refresh" Label="Restore Original" AccessKey="O"
+                              ToolTipService.ToolTip="Restore original image"
+                              Command="{Binding RestoreDefaultCommand}">
+                </AppBarButton>
             </CommandBar>
 
             <CommandBar x:Name="TopRightCommandBar" 
@@ -50,9 +88,27 @@
                         DefaultLabelPosition="Right"
                         IsDynamicOverflowEnabled="False"
                         OverflowButtonVisibility="Collapsed">
-                <AppBarButton Icon="Save" Command="{Binding SaveCommand}"></AppBarButton>
-                <AppBarButton Icon="Copy" Command="{Binding CopyCommand}"></AppBarButton>
-                <AppBarButton x:Name="ShareButton1" Icon="Share" Command="{Binding ShareCommand}"></AppBarButton>
+                <AppBarButton Icon="Save" AccessKey="S" 
+                              ToolTipService.ToolTip="Save (Ctrl+S)"
+                              Command="{Binding SaveCommand}">
+                    <AppBarButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="S" />
+                    </AppBarButton.KeyboardAccelerators>
+                </AppBarButton>
+                <AppBarButton Icon="Copy" AccessKey="C" 
+                              ToolTipService.ToolTip="Copy to clipboard(Ctrl+C)"
+                              Command="{Binding CopyCommand}">
+                    <AppBarButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="C" />
+                    </AppBarButton.KeyboardAccelerators>
+                </AppBarButton>
+                <AppBarButton x:Name="ShareButton1" Icon="Share" AccessKey="H" 
+                              ToolTipService.ToolTip="Share(Ctrl+H)"
+                              Command="{Binding ShareCommand}">
+                    <AppBarButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="H" />
+                    </AppBarButton.KeyboardAccelerators>
+                </AppBarButton>
             </CommandBar>
             
 
@@ -74,7 +130,7 @@
 
                         <Button Background="Transparent" 
                                 Height="38" Width="48" Margin="2"
-                                Command="{Binding ResizeCommand}"
+                                AccessKey="X"
                                 Style="{StaticResource ButtonRevealStyle}">
                             <Button.Content>
                                 <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE9A6;"/>
@@ -109,17 +165,31 @@
                         <TextBlock>px</TextBlock>
 
                         <Button Background="Transparent" 
-                                Height="38" Width="48" Margin="2"
+                                Height="38" Width="auto" Margin="2"
+                                AccessKey="5"
+                                ToolTipService.ToolTip="Run (F5)"
                                 Command="{Binding ResizeCommand}"
                                 Style="{StaticResource ButtonRevealStyle}">
                             <Button.Content>
-                                <SymbolIcon Symbol="Play" />
+                                <StackPanel Orientation="Horizontal">
+                                    <SymbolIcon Symbol="Play" />
+                                    <TextBlock>Go</TextBlock>
+                                </StackPanel>
                             </Button.Content>
+                            <Button.KeyboardAccelerators>
+                                <KeyboardAccelerator Key="F5" />
+                            </Button.KeyboardAccelerators>
                         </Button>
                     </StackPanel>
                 </CommandBar.Content>
                 <AppBarSeparator />
-                <AppBarButton Icon="Rotate" Command="{Binding RotateCommand}"></AppBarButton>
+                <AppBarButton Icon="Rotate" AccessKey="R"
+                              ToolTipService.ToolTip="Rotete 90° (Ctrl+R)"
+                              Command="{Binding RotateCommand}">
+                    <Button.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="R" />
+                    </Button.KeyboardAccelerators>
+                </AppBarButton>
                 <AppBarButton Icon="Crop" Visibility="Collapsed"></AppBarButton>
             </CommandBar>
         </Grid>
@@ -186,9 +256,21 @@
                         DefaultLabelPosition="Right"
                         IsDynamicOverflowEnabled="False"
                         OverflowButtonVisibility="Collapsed">
-                <AppBarButton Icon="OpenLocal" Command="{Binding OpenCommand}"></AppBarButton>
-                <AppBarButton Icon="Paste" Command="{Binding PasteCommand}"></AppBarButton>
-                <AppBarButton Icon="Refresh" Command="{Binding RestoreDefaultCommand}"></AppBarButton>
+                <AppBarButton Label="New" Icon="OpenFile">
+                    <AppBarButton.Flyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Icon="OpenFile" Text="From File" AccessKey="O" 
+                                            ToolTipService.ToolTip="Open, New image from file (Ctrl+O)" 
+                                            Command="{Binding OpenCommand}"></MenuFlyoutItem>
+                            <MenuFlyoutItem Icon="Paste" Text="From Clipboard" AccessKey="P" 
+                                            ToolTipService.ToolTip="Paste, New image from clipboard (Ctrl+P)" 
+                                            Command="{Binding PasteCommand}"></MenuFlyoutItem>
+                        </MenuFlyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
+                <AppBarButton Icon="Refresh" AccessKey="R" 
+                              ToolTipService.ToolTip="Restore original image"
+                              Command="{Binding RestoreDefaultCommand}"></AppBarButton>
             </CommandBar>
 
             <CommandBar x:Name="BottomRightCommandBar" 
@@ -198,9 +280,23 @@
                         DefaultLabelPosition="Right"
                         IsDynamicOverflowEnabled="False"
                         OverflowButtonVisibility="Collapsed">
-                <AppBarButton Icon="Save" Command="{Binding SaveCommand}"></AppBarButton>
-                <AppBarButton Icon="Copy" Command="{Binding CopyCommand}"></AppBarButton>
-                <AppBarButton x:Name="ShareButton2" Icon="Share" Command="{Binding ShareCommand}"></AppBarButton>
+                <AppBarButton Icon="Save" AccessKey="S" 
+                              ToolTipService.ToolTip="Save (Ctrl+S)"
+                              Command="{Binding SaveCommand}">
+                    <AppBarButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="S" />
+                    </AppBarButton.KeyboardAccelerators>
+                </AppBarButton>
+                <AppBarButton Icon="Copy" AccessKey="C" 
+                              ToolTipService.ToolTip="Copy to clipboard(Ctrl+C)"
+                              Command="{Binding CopyCommand}">
+                    <AppBarButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Modifiers="Control" Key="C" />
+                    </AppBarButton.KeyboardAccelerators>
+                </AppBarButton>
+                <AppBarButton x:Name="ShareButton2" Icon="Share" AccessKey="H" 
+                              ToolTipService.ToolTip="Share(Ctrl+H)"
+                              Command="{Binding ShareCommand}"></AppBarButton>
             </CommandBar>
         </Grid>
 

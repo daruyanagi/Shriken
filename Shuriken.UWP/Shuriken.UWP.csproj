@@ -24,7 +24,7 @@
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm|arm64</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>5B602072E5400CC425CE4AFEAF9BA43AC1870D15</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>554725FC98C27125521C5977E9ABAA6C550473BD</PackageCertificateThumbprint>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <PackageCertificateKeyFile />
   </PropertyGroup>
