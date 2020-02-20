@@ -32,26 +32,41 @@ namespace Shuriken.UWP
         public MainPage()
         {
             this.InitializeComponent();
+        }
 
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            // 共有のためのイベント購読
+            var dataTransferManager = DataTransferManager.GetForCurrentView();
+            dataTransferManager.DataRequested += DataTransferManager_DataRequestedAsync;
+
+
+            // ViewModel を構築
             ViewModel = new ViewModels.MainViewModel();
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             DataContext = ViewModel;
+
+            // パラメーターに Models.Picture が渡された場合は、履歴を復元して追加
+            var picture = e.Parameter as Models.Picture;
+            if (picture != null)
+            {
+                await ViewModel.PictureManipurationHistory.LoadAsync();
+                ViewModel.Resized = picture;
+            }
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-            // データの要求があったときのイベントを購読
-            var dataTransferManager = DataTransferManager.GetForCurrentView();
-            dataTransferManager.DataRequested += DataTransferManager_DataRequestedAsync;
-        }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        protected override async void OnNavigatedFrom(NavigationEventArgs e)
         {
             base.OnNavigatedFrom(e);
-            // イベントの購読解除
+
+            // 共有のためのイベント購読解除
             var dataTransferManager = DataTransferManager.GetForCurrentView();
             dataTransferManager.DataRequested -= this.DataTransferManager_DataRequestedAsync;
+
+            // 履歴を保存
+            await ViewModel.PictureManipurationHistory.SaveAsync();
         }
 
         private async void DataTransferManager_DataRequestedAsync(DataTransferManager sender, DataRequestedEventArgs args)

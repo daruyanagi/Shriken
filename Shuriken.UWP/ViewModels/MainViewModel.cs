@@ -29,7 +29,7 @@ namespace Shuriken.UWP.ViewModels
         public RelayCommand RestoreDefaultCommand { get; private set; }
         public RelayCommand ResizeCommand { get; private set; }
         public RelayCommand RotateCommand { get; private set; }
-        public RelayCommand CropCommand { get; private set; }
+        public RelayCommand<MainPage> CropCommand { get; private set; }
         public RelayCommand SaveCommand { get; private set; }
         public RelayCommand CopyCommand { get; private set; }
         public RelayCommand ShareCommand { get; private set; }
@@ -37,8 +37,8 @@ namespace Shuriken.UWP.ViewModels
         public Models.Picture Original { get { return original; } private set { SetProperty(ref original, value); } }
         private Models.Picture original = null;
 
-        public Models.Picture Resized { get { return resizedPictures.LastOrDefault(); } set { resizedPictures.Add(value); OnPropertyChanged(nameof(Resized)); } }
-        private List<Models.Picture> resizedPictures = new List<Models.Picture>();
+        public Models.Picture Resized { get { return PictureManipurationHistory.LastOrDefault(); } set { PictureManipurationHistory.Add(value); OnPropertyChanged(nameof(Resized)); } }
+        public Models.PictureManipurationHistory PictureManipurationHistory { get; } = new Models.PictureManipurationHistory();
 
         public int Limit { get { return limit; } set { SetProperty(ref limit, value); } }
         private int limit = 1024;
@@ -77,7 +77,7 @@ namespace Shuriken.UWP.ViewModels
 
             RestoreDefaultCommand = new RelayCommand(() =>
             {
-                resizedPictures.Clear();
+                PictureManipurationHistory.Clear();
                 Resized = Original;
             });
 
@@ -170,6 +170,13 @@ namespace Shuriken.UWP.ViewModels
 
                 if (FromShare) Window.Close();
             });
+
+            CropCommand = new RelayCommand<MainPage>(_ =>
+            {
+                if (Resized == null) return;
+
+                _.Frame.Navigate(typeof(Views.CropImagePage), Resized);
+            });
         }
 
         private async Task<SoftwareBitmap> ResizeByHeightAsync()
@@ -190,7 +197,7 @@ namespace Shuriken.UWP.ViewModels
 
             Original = await Models.Picture.FromFileAsync(file);
 
-            resizedPictures.Clear();
+            PictureManipurationHistory.Clear();
             Resized = Original;
         }
 
@@ -200,7 +207,7 @@ namespace Shuriken.UWP.ViewModels
 
             Original = await Models.Picture.FromStreamAsync(stream);
 
-            resizedPictures.Clear();
+            PictureManipurationHistory.Clear();
             Resized = Original;
         }
     }
